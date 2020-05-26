@@ -56,6 +56,47 @@ tfl = 0
 
 tf_buffer = tf2_ros.Buffer()
 
+max_linear = 0.2
+max_angular = math.pi/8
+
+def odometry(data):
+	global x 
+	global y
+	global alfa
+	global contador
+
+
+	x = data.pose.pose.position.x
+	y = data.pose.pose.position.y
+
+
+	quat = data.pose.pose.orientation
+	lista = [quat.xm quat.y, quat.z,quat.w]
+	angulos_rad = transformations.euler_from_quaternion(lista)
+	angulos = np.degrees(angulos_rad)
+
+	alfa = angulos_rad[2]
+
+	if contador % pula == 0:
+		print("Posicao (x,y) ({:.2f}) + angulo {:.2f}".format(x,y,angulos[2]))
+
+
+def angle(alfa,x,y):
+	beta = math.atan((y/x))
+	angulo_total = beta + math.pi - alfa
+	return angulo_total
+
+def distance(x,y):
+	hipotenusa = math.sqrt(pow(x,2) + pow(y,2))
+	return hipotenusa
+
+
+
+
+
+
+
+
 
 def roda_todo_frame(imagem):
 	print("frame")
@@ -141,7 +182,7 @@ if __name__ == "__main__":
 
 
 
-						# if dist > 0.5:
+						
 						
 						if (media[0] > centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
@@ -156,22 +197,31 @@ if __name__ == "__main__":
 						 	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
 						 	velocidade_saida.publish(vel)
 
+					if dist >= 0 and dist <= 0.3:
+
+						angle = angle(alfa,x,y)
+						distance = distance(x,y)
+
+						vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
+						vel_trans = Twist(Vector3(max_linear,0,0), Vector3(0,0,0))
+
+						sleep_rot = abs(angle/max_angular)
+						sleep_trans = abs(distance/max_linear)
+
+						velocidade_saida.publish(vel_rot)
+						rospy.sleep(sleep_rot)
+
+						velocidade_saida.publish(vel_trans)
+						rospy.sleep(sleep_trans)
+
+						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						velocidade_saida.publish()
+
 
 				cv2.waitKey(1)
 			
 			rospy.sleep(0.1)
-					# else:
-
-					# 	vel = Twist(vector3(0,0,0), Vector3(0,0,0.5))
-					# 	velocidade_saida.publish(vel)
-
-
-			
-
-					
-					# velocidade_saida.publish(vel)
-					# rospy.sleep(0.1)
-
+				
 
 	except rospy.ROSInterruptException:
 		print("Ocorreu uma exceção com o rospy")
