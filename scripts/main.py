@@ -58,8 +58,11 @@ tf_buffer = tf2_ros.Buffer()
 
 max_linear = 0.2
 max_angular = math.pi/8
+contador = 0
+pula = 100
 
-def odometry(data):
+
+def odometria(data):
 	global x 
 	global y
 	global alfa
@@ -71,7 +74,7 @@ def odometry(data):
 
 
 	quat = data.pose.pose.orientation
-	lista = [quat.xm quat.y, quat.z,quat.w]
+	lista = [quat.x, quat.y, quat.z,quat.w]
 	angulos_rad = transformations.euler_from_quaternion(lista)
 	angulos = np.degrees(angulos_rad)
 
@@ -157,6 +160,8 @@ if __name__ == "__main__":
 	print("Usando ", topico_imagem) 
 
 	velocidade_saida = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
+
+	ref_odometria = rospy.Subscriber("/odom", Odometry, odometria)
 
 	tfl = tf2_ros.TransformListener(tf_buffer) #conversao do sistema de coordenadas 
 	tolerancia = 25
