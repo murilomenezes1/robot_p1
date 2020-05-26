@@ -60,17 +60,20 @@ max_linear = 0.2
 max_angular = math.pi/8
 contador = 0
 pula = 100
+alfa = -1
+px = None
+py = None
 
 
 def odometria(data):
-	global x 
-	global y
+	global px 
+	global py
 	global alfa
 	global contador
 
 
-	x = data.pose.pose.position.x
-	y = data.pose.pose.position.y
+	px = data.pose.pose.position.x
+	py = data.pose.pose.position.y
 
 
 	quat = data.pose.pose.orientation
@@ -89,7 +92,7 @@ def angle(alfa,x,y):
 	angulo_total = beta + math.pi - alfa
 	return angulo_total
 
-def distance(x,y):
+def distance(px,py):
 	hipotenusa = math.sqrt(pow(x,2) + pow(y,2))
 	return hipotenusa
 
@@ -202,10 +205,10 @@ if __name__ == "__main__":
 						 	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
 						 	velocidade_saida.publish(vel)
 
-					if dist >= 0 and dist <= 0.3:
+					if dist >= 0 and dist <= 0.15:
 
-						angle = angle(alfa,x,y)
-						distance = distance(x,y)
+						angle = angle(alfa,px,py)
+						distance = distance(px,py)
 
 						vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
 						vel_trans = Twist(Vector3(max_linear,0,0), Vector3(0,0,0))
