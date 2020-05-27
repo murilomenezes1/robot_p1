@@ -99,6 +99,11 @@ def distance(px,py):
 
 
 
+def track():
+
+	global fuga_x
+	global fuga_y
+
 
 
 
@@ -168,6 +173,8 @@ if __name__ == "__main__":
 
 	tfl = tf2_ros.TransformListener(tf_buffer) #conversao do sistema de coordenadas 
 	tolerancia = 25
+	creeper_found = False
+
 
 	try:
 
@@ -184,13 +191,12 @@ if __name__ == "__main__":
 				# rospy.sleep(0.1)
 
 					if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
-
+						
 						# print("Media dos vermelhos: {0}, {1}".format(media[0], media[1]))
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
 
+						creeper_found = True
 
-
-						
 						
 						if (media[0] > centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
@@ -205,12 +211,14 @@ if __name__ == "__main__":
 						 	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
 						 	velocidade_saida.publish(vel)
 
-					if dist >= 0 and dist <= 0.15:
+					
+
+					if dist > 0 and dist <= 0.15 and creeper_found == True:
 
 
-						vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						velocidade_saida.publish(vel)
-						rospy.sleep(0.2)
+						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						# velocidade_saida.publish(vel)
+						# rospy.sleep(0.2)
 
 
 
