@@ -237,15 +237,15 @@ if __name__ == "__main__":
 							# distance = distance(px,py)
 						
 
-					if dist <= 0.25:	
+					if dist <= 0.25 and dist > 0:	
 
 						go_back = True
-						vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						velocidade_saida.publish(vel)
+						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						# velocidade_saida.publish(vel)
 
 					if go_back:
 								
-						while x > x0 and y > y0: # and creeper_found == True:
+						while x > x0 and y > y0: 
 
 
 							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
@@ -259,6 +259,7 @@ if __name__ == "__main__":
 
 							velocidade_saida.publish(vel_trans)
 							rospy.sleep(sleep_trans)
+						print("-------")
 	
 
 						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
