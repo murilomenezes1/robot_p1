@@ -85,6 +85,7 @@ def odometria(data):
 
 	if contador % pula == 0:
 		print("Posicao (x,y) ({:.2f}) + angulo {:.2f}".format(x,y,angulos[2]))
+		contador += 1
 
 
 def angle(alfa,x,y):
@@ -175,6 +176,9 @@ if __name__ == "__main__":
 	tolerancia = 25
 	creeper_found = False
 
+	x0 = dados.pose.pose.position.x
+	y0 = dados.pose.pose.position.y
+
 
 	try:
 
@@ -224,21 +228,25 @@ if __name__ == "__main__":
 
 						# angle = angle(alfa,px,py)
 						distance = distance(px,py)
+						
 
-						# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
-						vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
+						while x > x0 and y > y0:
 
-						# sleep_rot = abs(angle/max_angular)
-						sleep_trans = abs(distance/max_linear)
 
-						# velocidade_saida.publish(vel_rot)
-						# rospy.sleep(sleep_rot)
+							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
+							vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
 
-						velocidade_saida.publish(vel_trans)
-						rospy.sleep(sleep_trans)
+							# sleep_rot = abs(angle/max_angular)
+							 sleep_trans = abs(distance/max_linear)
 
-						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						velocidade_saida.publish()
+							# velocidade_saida.publish(vel_rot)
+							# rospy.sleep(sleep_rot)
+
+							velocidade_saida.publish(vel_trans)
+							rospy.sleep(sleep_trans)
+
+							vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
+							velocidade_saida.publish()
 
 
 				cv2.waitKey(1)
