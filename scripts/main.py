@@ -203,7 +203,7 @@ if __name__ == "__main__":
 					cv2.waitKey(1)
 				# rospy.sleep(0.1)
 
-					if len(media) != 0 and len(centro0) !=0 and maior_area > 500 and dist > 0.2:
+					if len(media) != 0 and len(centro0) !=0 and maior_area > 500 and dist >= 0.5:
 
 						# print("Media dos vermelhos: {0}, {1}".format(media[0], media[1]))
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
@@ -212,18 +212,18 @@ if __name__ == "__main__":
 
 						# if dist > 0.2:
 
-							if (media[0] > centro0[0]):
-								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
-								velocidade_saida.publish(vel)
-											
-							elif (media[0] < centro0[0]):
-								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
-								velocidade_saida.publish(vel)
+						if (media[0] > centro0[0]):
+							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
+							velocidade_saida.publish(vel)
+										
+						elif (media[0] < centro0[0]):
+							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
+							velocidade_saida.publish(vel)
 
-							elif (abs(media[0] - centro0[0]) < 10):
-						
-							 	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
-							 	velocidade_saida.publish(vel)
+						# elif (abs(media[0] - centro0[0]) < 10):
+					
+						#  	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
+						#  	velocidade_saida.publish(vel)
 
 					
 
@@ -237,7 +237,7 @@ if __name__ == "__main__":
 						
 
 
-					if x > x0 and y > y0 and creeper_found == True:
+					if x > x0 and y > y0: # and creeper_found == True:
 
 
 						# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
