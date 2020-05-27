@@ -83,6 +83,11 @@ def odometria(data):
 
 	alfa = angulos_rad[2]
 
+	if contador == 0:
+		x0 = dados.pose.pose.position.x
+		y0 = dados.pose.pose.position.y
+
+
 	if contador % pula == 0:
 		print("Posicao (x,y) ({:.2f}) + angulo {:.2f}".format(x,y,angulos[2]))
 		contador += 1
