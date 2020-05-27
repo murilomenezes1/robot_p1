@@ -203,7 +203,7 @@ if __name__ == "__main__":
 					cv2.waitKey(1)
 				# rospy.sleep(0.1)
 
-					if len(media) != 0 and len(centro0) !=0 and maior_area > 500 and dist >= 0.5:
+					if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
 
 						# print("Media dos vermelhos: {0}, {1}".format(media[0], media[1]))
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
@@ -211,6 +211,7 @@ if __name__ == "__main__":
 						creeper_found = True
 
 						# if dist > 0.2:
+					if creeper_found:
 
 						if (media[0] > centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
@@ -236,22 +237,24 @@ if __name__ == "__main__":
 							# distance = distance(px,py)
 						
 
+					if dist <= 0.5:	
+								
+						if x > x0 and y > y0: # and creeper_found == True:
 
-					if x > x0 and y > y0: # and creeper_found == True:
 
+							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
+							vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
 
-						# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
-						vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
+							# sleep_rot = abs(angle/max_angular)
+							sleep_trans = abs(distance/max_linear)
 
-						# sleep_rot = abs(angle/max_angular)
-						sleep_trans = abs(distance/max_linear)
+							# velocidade_saida.publish(vel_rot)
+							# rospy.sleep(sleep_rot)
 
-						# velocidade_saida.publish(vel_rot)
-						# rospy.sleep(sleep_rot)
-
-						velocidade_saida.publish(vel_trans)
-						rospy.sleep(sleep_trans)
-
+							velocidade_saida.publish(vel_trans)
+							rospy.sleep(sleep_trans)
+	.
+0
 						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						velocidade_saida.publish()
 
