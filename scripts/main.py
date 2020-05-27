@@ -191,7 +191,7 @@ if __name__ == "__main__":
 				# rospy.sleep(0.1)
 
 					if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
-						
+
 						# print("Media dos vermelhos: {0}, {1}".format(media[0], media[1]))
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
 
@@ -213,7 +213,7 @@ if __name__ == "__main__":
 
 					
 
-					if dist > 0 and dist <= 0.15 and creeper_found == True:
+					if dist > 0 and dist <= 0.15:
 
 
 						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
