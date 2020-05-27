@@ -212,13 +212,13 @@ if __name__ == "__main__":
 						velocidade_saida.publish(vel)
 						rospy.sleep(0.2)
 
-						
+
 
 						# angle = angle(alfa,px,py)
 						distance = distance(px,py)
 
 						# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
-						vel_trans = Twist(Vector3(max_linear,0,0), Vector3(0,0,0))
+						vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
 
 						# sleep_rot = abs(angle/max_angular)
 						sleep_trans = abs(distance/max_linear)
