@@ -26,6 +26,8 @@ from sensor_msgs.msg import LaserScan
 
 import visao_module
 
+x0 = None
+y0 = None
 
 bridge = CvBridge()
 
@@ -66,10 +68,14 @@ py = None
 
 
 def odometria(data):
+
 	global px 
 	global py
 	global alfa
 	global contador
+	global x0
+	global y0
+
 
 
 	px = data.pose.pose.position.x
@@ -124,6 +130,7 @@ def roda_todo_frame(imagem):
 	global resultados
 	global maior_area
 	global frame
+
 
 	now = rospy.get_rostime()
 	imgtime = imagem.header.stamp
@@ -203,52 +210,48 @@ if __name__ == "__main__":
 
 						creeper_found = True
 
+						if dist > 0.2:
+							if (media[0] > centro0[0]):
+								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
+								velocidade_saida.publish(vel)
+											
+							elif (media[0] < centro0[0]):
+								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
+								velocidade_saida.publish(vel)
+
+							elif (abs(media[0] - centro0[0]) < 10):
 						
-						if (media[0] > centro0[0]):
-							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
-							velocidade_saida.publish(vel)
-										
-						elif (media[0] < centro0[0]):
-							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
-							velocidade_saida.publish(vel)
-
-						elif (abs(media[0] - centro0[0]) < 10):
-					
-						 	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
-						 	velocidade_saida.publish(vel)
+							 	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
+							 	velocidade_saida.publish(vel)
 
 					
 
-					if dist > 0 and dist <= 0.15:
+						else:
+
+							# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+							# velocidade_saida.publish(vel)
+							# rospy.sleep(0.2)
+							# angle = angle(alfa,px,py)
+							# distance = distance(px,py)
+							
+
+							while x > x0 and y > y0:
 
 
-						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						# velocidade_saida.publish(vel)
-						# rospy.sleep(0.2)
+								# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
+								vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
 
+								# sleep_rot = abs(angle/max_angular)
+								sleep_trans = abs(distance/max_linear)
 
+								# velocidade_saida.publish(vel_rot)
+								# rospy.sleep(sleep_rot)
 
-						# angle = angle(alfa,px,py)
-						distance = distance(px,py)
-						
+								velocidade_saida.publish(vel_trans)
+								rospy.sleep(sleep_trans)
 
-						while x > x0 and y > y0:
-
-
-							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
-							vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
-
-							# sleep_rot = abs(angle/max_angular)
-							sleep_trans = abs(distance/max_linear)
-
-							# velocidade_saida.publish(vel_rot)
-							# rospy.sleep(sleep_rot)
-
-							velocidade_saida.publish(vel_trans)
-							rospy.sleep(sleep_trans)
-
-							vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
-							velocidade_saida.publish()
+								vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
+								velocidade_saida.publish()
 
 
 				cv2.waitKey(1)
