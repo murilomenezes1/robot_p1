@@ -207,17 +207,24 @@ if __name__ == "__main__":
 
 					if dist >= 0 and dist <= 0.15:
 
-						angle = angle(alfa,px,py)
+
+						vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						velocidade_saida.publish(vel)
+						rospy.sleep(0.2)
+
+						
+
+						# angle = angle(alfa,px,py)
 						distance = distance(px,py)
 
-						vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
+						# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
 						vel_trans = Twist(Vector3(max_linear,0,0), Vector3(0,0,0))
 
-						sleep_rot = abs(angle/max_angular)
+						# sleep_rot = abs(angle/max_angular)
 						sleep_trans = abs(distance/max_linear)
 
-						velocidade_saida.publish(vel_rot)
-						rospy.sleep(sleep_rot)
+						# velocidade_saida.publish(vel_rot)
+						# rospy.sleep(sleep_rot)
 
 						velocidade_saida.publish(vel_trans)
 						rospy.sleep(sleep_trans)
