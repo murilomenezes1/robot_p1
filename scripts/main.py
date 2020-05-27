@@ -84,8 +84,8 @@ def odometria(data):
 	alfa = angulos_rad[2]
 
 	if contador == 0:
-		x0 = dados.pose.pose.position.x
-		y0 = dados.pose.pose.position.y
+		x0 = data.pose.pose.position.x
+		y0 = data.pose.pose.position.y
 
 
 	if contador % pula == 0:
@@ -180,9 +180,6 @@ if __name__ == "__main__":
 	tfl = tf2_ros.TransformListener(tf_buffer) #conversao do sistema de coordenadas 
 	tolerancia = 25
 	creeper_found = False
-
-	x0 = dados.pose.pose.position.x
-	y0 = dados.pose.pose.position.y
 
 
 	try:
