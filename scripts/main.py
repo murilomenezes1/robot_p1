@@ -187,7 +187,7 @@ if __name__ == "__main__":
 	tfl = tf2_ros.TransformListener(tf_buffer) #conversao do sistema de coordenadas 
 	tolerancia = 25
 	creeper_found = False
-
+	go_back = False
 
 	try:
 
@@ -237,9 +237,15 @@ if __name__ == "__main__":
 							# distance = distance(px,py)
 						
 
-					if dist <= 0.5:	
+					if dist <= 0.25:	
+
+						go_back = True
+						vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						velocidade_saida.publish(vel)
+
+					if go_back:
 								
-						if x > x0 and y > y0: # and creeper_found == True:
+						while x > x0 and y > y0: # and creeper_found == True:
 
 
 							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
@@ -253,8 +259,8 @@ if __name__ == "__main__":
 
 							velocidade_saida.publish(vel_trans)
 							rospy.sleep(sleep_trans)
-	.
-0
+	
+
 						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						velocidade_saida.publish()
 
