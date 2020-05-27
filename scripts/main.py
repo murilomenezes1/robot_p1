@@ -237,7 +237,7 @@ if __name__ == "__main__":
 							vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
 
 							# sleep_rot = abs(angle/max_angular)
-							 sleep_trans = abs(distance/max_linear)
+							sleep_trans = abs(distance/max_linear)
 
 							# velocidade_saida.publish(vel_rot)
 							# rospy.sleep(sleep_rot)
