@@ -321,12 +321,22 @@ if __name__ == "__main__":
 						# velocidade_saida.publish(vel)
 
 					if go_back and javolto == False:#and creeper_acquired == False:
-								
-						while px > x0 and py > y0: 
+
+						distance2 = distance(px,py)
+
+						vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+
+						sleep_trans = abs(distance2/max_linear)
+
+						velocidade_saida.publish(vel_trans)
+
+						rospy.sleep(0.2)
+
+						#while px > x0 and py > y0: 
 
 
 							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
-							vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
+							#vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
 
 							# sleep_rot = abs(angle/max_angular)
 							#sleep_trans = abs(distance/max_linear)
@@ -334,31 +344,31 @@ if __name__ == "__main__":
 							# velocidade_saida.publish(vel_rot)
 							# rospy.sleep(sleep_rot)
 
-							velocidade_saida.publish(vel_trans)
-							rospy.sleep(0.2)
-							print("-------")
-
+							#velocidade_saida.publish(vel_trans)
+							#rospy.sleep(0.2)
+							#print("-------")
 
 	
-						#creeper_acquired = True		
-						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						velocidade_saida.publish()
+						#vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						#velocidade_saida.publish()
 						#go_back = False
-						javolto = True
+						#javolto = True
 						#tracking = True
-						creeper_acquired = True
+						#creeper_acquired = True
 
-					if tracking or creeper_acquired:
+					if tracking:#tracking or creeper_acquired:
 						pfuga,pframe = track(cv_image)
+						#print("xxxxxxxxxxxxxxxxxxxxx")
 
 
 						if (pfuga > centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
 							velocidade_saida.publish(vel)
-
-						elif (pfuga <  centro0[0]):
+							print("xxxxxxxxxxxxxxxxxxxxx")
+						elif (pfuga[0] <  centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
 							velocidade_saida.publish(vel)
+							print("ooooooooooooooooooooooooo")
 
 
 				cv2.waitKey(1)
