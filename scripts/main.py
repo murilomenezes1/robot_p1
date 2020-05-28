@@ -26,6 +26,11 @@ from sensor_msgs.msg import LaserScan
 
 import visao_module
 
+
+
+objetivo = ["blue",11,"cat"]
+
+
 x0 = None
 y0 = None
 
@@ -51,7 +56,7 @@ y = 0
 z = 0 
 id = 0
 
-cor = "green"
+# cor = "green"
 
 frame = "camera_link"
 # frame = "head_camera"  # DESCOMENTE para usar com webcam USB via roslaunch tag_tracking usbcam
@@ -201,6 +206,7 @@ def roda_todo_frame(imagem):
 	global resultados
 	global maior_area
 	global frame
+	global objetivo
 
 
 	now = rospy.get_rostime()
@@ -216,8 +222,8 @@ def roda_todo_frame(imagem):
 		temp_image = bridge.compressed_imgmsg_to_cv2(imagem, "bgr8")
 		# Note que os resultados já são guardados automaticamente na variável
 		# chamada resultados
-		centro, saida_net, resultados =  visao_module.processa(temp_image)
-		media, centro0, maior_area, frame = visao_module.identifica_cor(temp_image,"green")        
+		centro, saida_net, resultados =  visao_module.processa(temp_image,objetivo[2])
+		media, centro0, maior_area, frame = visao_module.identifica_cor(temp_image,objetivo[0])        
 		for r in resultados:
 			# print(r) - print feito para documentar e entender
 			# o resultado            
@@ -262,14 +268,18 @@ if __name__ == "__main__":
 	tracking = True
 	creeper_acquired = False
 	at_base = False
-	turning = False
-	left = False
-	right = False
+	final = False
 
 	try:
 
 
 			while not rospy.is_shutdown():
+
+				for r in resultados:
+					detection = r[0]
+					(startX, startY) = r[2]
+					(endX, endY) = r[3]
+
 
 				if cv_image is not None:
 					# Note que o imshow precisa ficar *ou* no codigo de tratamento de eventos *ou* no thread principal, não em ambos
@@ -349,8 +359,9 @@ if __name__ == "__main__":
 					if at_base == True and tracking == False:
 						print("at base")
 					
-						tracking = True
+						# tracking = True
 						at_base = False
+						final = True
 		
 
 					if tracking :#tracking or creeper_acquired:
@@ -368,6 +379,32 @@ if __name__ == "__main__":
 							velocidade_saida.publish(vel)
 						#if ymedia[0] <= 0:
 							#vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
+
+					if final:
+						ymedia, ycenter, yma, yframe = visao_module.identifica_cor(frame, "yellow")
+
+						if (ymedia[0] > ycenter[0]):
+							vel = Twist(Vector3(0.2,0,0), Vector3(0,0,-0.1))
+							velocidade_saida.publish(vel)
+						if (ymedia[0] < ycenter[0]):
+							vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0.1))
+							velocidade_saida.publish(vel)
+
+						if detection != None:
+							centrox = (startX+endX)/2
+
+							if centrox > centro[0]:
+								vel = Twist(Vector3(0.2,0,0), Vector3(0,0,-0.1))
+								velocidade_saida.publish(vel)
+
+							if centrox < centro[0]:
+								vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0.1))
+						
+						if dist < 0.25 and dist > 0:
+
+							vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+
+
 
 
 						
