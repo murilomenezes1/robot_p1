@@ -260,6 +260,7 @@ if __name__ == "__main__":
 	tracking = True
 	creeper_acquired = False
 	at_base = False
+	turning = False
 
 	try:
 
@@ -332,15 +333,21 @@ if __name__ == "__main__":
 							sleep_trans = abs(distance2/max_linear)
 							sleep_rot = abs(ang/max_angular)
 
-							velocidade_saida.publish(vel_rot)
-							rospy.sleep(sleep_rot)
-
-							velocidade_saida.publish(vel_trans)
-							rospy.sleep(vel_trans)
-
-							if px == x0 and py == x0:
+							if turning == False:
+								velocidade_saida.publish(vel_rot)
+								rospy.sleep(sleep_rot)
+								turning = True
+							elif at_base == False:
+								velocidade_saida.publish(vel_trans)
+								rospy.sleep(sleep_trans)
 								at_base = True
-								tracking = True
+
+					if at_base:
+						print("at base")
+					
+						tracking = True
+						vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						velocidade_saida.publish(vel_rot)
 
 						# while px > x0 and py > y0: 
 
