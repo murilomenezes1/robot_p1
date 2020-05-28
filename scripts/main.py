@@ -323,24 +323,47 @@ if __name__ == "__main__":
 
 					if go_back and at_base == False:#and creeper_acquired == False:
 
+						while px > x0 and py > y0:
 
-							ang = angle(alfa,px,py)
-							distance2 = distance(px,py)
+							print("going back")
 
-							vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
-							vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
+							if (media[0] > centro0[0]):
+								vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,0.1))
+								velocidade_saida.publish(vel)
+											
+							elif (media[0] < centro0[0]):
+								vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,-0.1))
+								velocidade_saida.publish(vel)
 
-							sleep_trans = abs(distance2/max_linear)
-							sleep_rot = abs(ang/max_angular)
 
-							if turning == False:
-								velocidade_saida.publish(vel_rot)
-								rospy.sleep(sleep_rot)
-								turning = True
-							elif at_base == False:
-								velocidade_saida.publish(vel_trans)
-								rospy.sleep(sleep_trans)
-								at_base = True
+
+							elif (abs(media[0] - centro0[0]) < 10):
+						
+							  	vel = Twist(Vector3(-0.3,0,0), Vector3(0,0,0))
+							  	velocidade_saida.publish(vel)
+
+
+						
+
+
+
+						# ang = angle(alfa,px,py)
+						# distance2 = distance(px,py)
+
+						# vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+						# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
+
+						# sleep_trans = abs(distance2/max_linear)
+						# sleep_rot = abs(ang/max_angular)
+
+						# if turning == False:
+						# 	velocidade_saida.publish(vel_rot)
+						# 	rospy.sleep(sleep_rot)
+						# 	turning = True
+						# elif at_base == False:
+						# 	velocidade_saida.publish(vel_trans)
+						# 	rospy.sleep(sleep_trans)
+						# 	at_base = True
 
 					if at_base:
 						print("at base")
