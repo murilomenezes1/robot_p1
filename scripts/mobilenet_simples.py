@@ -33,13 +33,14 @@ COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 # print("[INFO] loading model...")
 net = cv2.dnn.readNetFromCaffe(proto, model)
 
+
 # load the input image and construct an input blob for the image
 # by resizing to a fixed 300x300 pixels and then normalizing it
 # (note: normalization is done via the authors of the MobileNet SSD
 # implementation)
 
 
-def detect(frame,CLASS):
+def detect(frame):
 
     global CLASSES 
     image = frame.copy()
@@ -51,7 +52,7 @@ def detect(frame,CLASS):
     # print("[INFO] computing object detections...")
     net.setInput(blob)
     detections = net.forward()
-    CLASS_IDX = CLASSES.index(CLASS)
+    # CLASS_IDX = CLASSES.index(CLASS)
 
     # loop over the detections
     for i in np.arange(0, detections.shape[2]):
@@ -70,20 +71,20 @@ def detect(frame,CLASS):
 
             idx = int(detections[0, 0, i, 1])
 
-            if idx == CLASS_IDX:
-                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-                (startX, startY, endX, endY) = box.astype("int")
+           
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+            (startX, startY, endX, endY) = box.astype("int")
 
-            # display the prediction
-                label = "{}: {:.2f}%".format(CLASSES[idx], confidence * 100)
-            #print("[INFO] {}".format(label))
-                cv2.rectangle(image, (startX, startY), (endX, endY),
-                    COLORS[idx], 2)
-                y = startY - 15 if startY - 15 > 15 else startY + 15
-                cv2.putText(image, label, (startX, y),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
+        # display the prediction
+            label = "{}: {:.2f}%".format(CLASSES[idx], confidence * 100)
+        #print("[INFO] {}".format(label))
+            cv2.rectangle(image, (startX, startY), (endX, endY),
+                COLORS[idx], 2)
+            y = startY - 15 if startY - 15 > 15 else startY + 15
+            cv2.putText(image, label, (startX, y),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-                results.append((CLASSES[idx], confidence*100, (startX, startY),(endX, endY) ))
+            results.append((CLASSES[idx], confidence*100, (startX, startY),(endX, endY) ))
 
     # show the output image
     return image, results
