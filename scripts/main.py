@@ -118,6 +118,67 @@ def track():
 	global fuga_y
 
 
+	edges = cv2.Canny(grayscale,50,150,apertureSize = 3)
+	lines = cv2.HoughLines(edges, 1,np.pi/180,200)
+
+
+	# Ponto de Fuga
+	k1 = 0
+	m1 = 0
+	k2 = 0
+	m2 = 0 	
+
+
+	lines_detected0 = False
+	lines_detected1 = False
+
+	for l in lines:
+		for radius, angle in l:
+			a = np.cos(angle)
+			b = np.sin(angle)
+
+			x0 = a*radius
+			y0 = b*radius
+		
+
+			x1 = int(x0 + 1000*(-b))
+			y1 = int(y0 + 1000*(a))
+			x2 = int(x0 - 1000*(-b))
+			y2 = int(y0 - 1000*(a)) 
+
+
+			distx = x2-x1
+			disty = y2-y1
+
+
+			if distx != 0:
+				coef = disty/distx
+
+			if coef < -0.25 and coef > -3:
+				if lines_detected0 == False:
+					lines_detected0 = True
+					m1 = coef
+					k1 = (y1-coef*x1)
+					cv2.line(frame,(x1,y1), (x2,y2), (0,0,255),2)
+
+			elif coef > 0.25 and coef < 3:
+				if lines_detected1 == False:
+					lines_detected1 = True
+					m2 = coef
+					k2 = (y1-coef*x1)
+					cv2.line(frame,(x1,y1), (x2,y2), (0,0,255),2)
+
+	if (m1-m2) != 0:
+		fuga_x = int((k2-k1)/(m1-m2))
+	fuga_y = int(m1*fuga_x + k1)
+
+	pfuga = (fuga_x,fuga_y)
+	cv2.circle(frame,pfuga,10,(0,255,0),-1)
+
+
+	return pfuga, frame
+
+
 
 
 
@@ -189,6 +250,8 @@ if __name__ == "__main__":
 	tolerancia = 25
 	creeper_found = False
 	go_back = False
+	tracking = True
+	creeper_acquired = False
 
 	try:
 
@@ -198,8 +261,9 @@ if __name__ == "__main__":
 				# for r in resultados:
 				# 	print(r)
 
-				if cv_image is not None:
+				if frame is not None:
 					# Note que o imshow precisa ficar *ou* no codigo de tratamento de eventos *ou* no thread principal, não em ambos
+					pfuga,frame = track(frame)
 					cv2.imshow("cv_image no loop principal", frame)
 					cv2.waitKey(1)
 				# rospy.sleep(0.1)
@@ -210,6 +274,7 @@ if __name__ == "__main__":
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
 
 						creeper_found = True
+						tracking = False
 
 						# if dist > 0.2:
 					if creeper_found:
@@ -263,10 +328,23 @@ if __name__ == "__main__":
 							velocidade_saida.publish(vel_trans)
 							rospy.sleep(0.2)
 							print("-------")
-	
 
+
+	
+						creeper_acquired = True		
 						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						velocidade_saida.publish()
+
+					if tracking or creeper_acquired:
+
+
+						if (pfuga > centro0[0]):
+							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
+							velocidade_saida.publish(vel)
+
+						elif (pfuga <  centro0[0]):
+							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
+							velocidade_saida.publish(vel)
 
 
 				cv2.waitKey(1)
