@@ -215,7 +215,7 @@ def roda_todo_frame(imagem):
 		# Note que os resultados já são guardados automaticamente na variável
 		# chamada resultados
 		centro, saida_net, resultados =  visao_module.processa(temp_image)
-		media, centro0, maior_area, frame = visao_module.identifica_cor(temp_image)        
+		media, centro0, maior_area, frame = visao_module.identifica_cor(temp_image,"blue")        
 		for r in resultados:
 			# print(r) - print feito para documentar e entender
 			# o resultado            
@@ -410,16 +410,30 @@ if __name__ == "__main__":
 
 
 					if tracking :#tracking or creeper_acquired:
-						pfuga,pframe = track(cv_image)
-						#print("xxxxxxxxxxxxxxxxxxxxx")
-						if (fuga_x > centro0[0]):
-							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
-							velocidade_saida.publish(vel)
-							print("xxxxxxxxxxxxxxxxxxxxx")
-						elif (fuga_x <  centro0[0]):
-							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
-							velocidade_saida.publish(vel)
-							print("ooooooooooooooooooooooooo")
+
+						ymedia, ycenter, yma, yframe = visao_module.identifica_cor(frame, "yellow")
+
+
+						if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
+
+							if (ymedia[0] > ycenter[0]):
+								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
+								velocidade_saida.publish(vel)
+							if (ymedia[0] < ycenter[0]):
+								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
+								velocidade_saida.publish(vel)
+
+
+						#  pfuga,pframe = track(cv_image)
+						#  print("xxxxxxxxxxxxxxxxxxxxx")
+						#  if (fuga_x > centro0[0]):
+						# 	 vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
+						# 	 velocidade_saida.publish(vel)
+						# 	print("xxxxxxxxxxxxxxxxxxxxx")
+						# elif (fuga_x <  centro0[0]):
+						# 	vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
+						# 	velocidade_saida.publish(vel)
+						# 	print("ooooooooooooooooooooooooo")
 
 
 				cv2.waitKey(1)
