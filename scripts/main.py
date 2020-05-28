@@ -261,6 +261,8 @@ if __name__ == "__main__":
 	creeper_acquired = False
 	at_base = False
 	turning = False
+	left = False
+	right = False
 
 	try:
 
@@ -288,19 +290,23 @@ if __name__ == "__main__":
 						# if dist > 0.2:
 					if creeper_found and creeper_acquired == False:
 
-						if (media[0] > centro0[0]):
-							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
+						if (media[0] > (centro0[0] + tolerancia)) :#and right == False:
+							vel = Twist(Vector3(0,0,0), Vector3(0,0,-0.1))
 							velocidade_saida.publish(vel)
+							#rospy.sleep(0.2)
+							#right = True
 										
-						elif (media[0] < centro0[0]):
-							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
+						elif (media[0] < (centro0[0] - tolerancia)):# and left == False:
+							vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
 							velocidade_saida.publish(vel)
+							#rospy.sleep(0.2)
+							#left =  True
 
 
 
 						elif (abs(media[0] - centro0[0]) < 10):
 					
-						  	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
+						  	vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0))
 						  	velocidade_saida.publish(vel)
 
 					
@@ -317,34 +323,39 @@ if __name__ == "__main__":
 					if dist <= 0.25 and dist > 0:	
 
 						go_back = True
-						#creeper_acquired = True
+						creeper_acquired = True
 						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						# velocidade_saida.publish(vel)
 
-					if go_back and at_base == False:#and creeper_acquired == False:
+					if go_back == True and at_base == False :#and tracking == False:#and creeper_acquired == False:
 
 						while px > x0 and py > y0:
 
 							print("going back")
 
-							if (media[0] > centro0[0]):
-								vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,0.1))
-								velocidade_saida.publish(vel)
+							vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+							velocidade_saida.publish(vel_trans)
+							rospy.sleep(0.2)
+
+
+							#if (media[0] > centro0[0]):
+								#vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,-0.1))
+								#velocidade_saida.publish(vel)
 											
-							elif (media[0] < centro0[0]):
-								vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,-0.1))
-								velocidade_saida.publish(vel)
+							#elif (media[0] < centro0[0]):
+								#vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,0.1))
+								#velocidade_saida.publish(vel)
 
 
 
-							elif (abs(media[0] - centro0[0]) < 10):
+							#lif (abs(media[0] - centro0[0]) < 10):
 						
-							  	vel = Twist(Vector3(-0.3,0,0), Vector3(0,0,0))
-							  	velocidade_saida.publish(vel)
+							  	#vel = Twist(Vector3(-0.3,0,0), Vector3(0,0,0))
+							  	#velocidade_saida.publish(vel)
 
 
 						
-
+						at_base = True
 
 
 						# ang = angle(alfa,px,py)
@@ -365,12 +376,12 @@ if __name__ == "__main__":
 						# 	rospy.sleep(sleep_trans)
 						# 	at_base = True
 
-					if at_base:
+					if at_base == True and tracking == False:
 						print("at base")
 					
 						tracking = True
-						vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						velocidade_saida.publish(vel_rot)
+						#vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						#velocidade_saida.publish(vel)
 
 						# while px > x0 and py > y0: 
 
@@ -396,16 +407,17 @@ if __name__ == "__main__":
 						#tracking = True
 						#creeper_acquired = True
 
-					if tracking:#tracking or creeper_acquired:
+
+					if tracking :#tracking or creeper_acquired:
 						pfuga,pframe = track(cv_image)
 						#print("xxxxxxxxxxxxxxxxxxxxx")
 
-
+						at_base = False
 						if (pfuga > centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
 							velocidade_saida.publish(vel)
 							print("xxxxxxxxxxxxxxxxxxxxx")
-						elif (pfuga[0] <  centro0[0]):
+						elif (pfuga <  centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
 							velocidade_saida.publish(vel)
 							print("ooooooooooooooooooooooooo")
