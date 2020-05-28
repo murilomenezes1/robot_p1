@@ -112,12 +112,12 @@ def distance(px,py):
 
 
 
-def track():
+def track(frame):
 
 	global fuga_x
 	global fuga_y
 
-
+	grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	edges = cv2.Canny(grayscale,50,150,apertureSize = 3)
 	lines = cv2.HoughLines(edges, 1,np.pi/180,200)
 
@@ -261,10 +261,10 @@ if __name__ == "__main__":
 				# for r in resultados:
 				# 	print(r)
 
-				if frame is not None:
+				if cv_image is not None:
 					# Note que o imshow precisa ficar *ou* no codigo de tratamento de eventos *ou* no thread principal, não em ambos
-					pfuga,frame = track(frame)
-					cv2.imshow("cv_image no loop principal", frame)
+					pfuga,pframe = track(cv_image)
+					cv2.imshow("cv_image no loop principal", pframe)
 					cv2.waitKey(1)
 				# rospy.sleep(0.1)
 
