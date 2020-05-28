@@ -92,11 +92,12 @@ def odometria(data):
 	if contador == 0:
 		x0 = data.pose.pose.position.x
 		y0 = data.pose.pose.position.y
-
-
-	if contador % pula == 0:
-		print("Posicao (x,y) ({:.2f}) + angulo {:.2f}".format(x,y,angulos[2]))
 		contador += 1
+
+
+	#if contador % pula == 0:
+		#print("Posicao (x,y) ({:.2f}) + angulo {:.2f}".format(x,y,angulos[2]))
+		#contador += 1
 
 
 def angle(alfa,x,y):
@@ -221,10 +222,12 @@ if __name__ == "__main__":
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
 							velocidade_saida.publish(vel)
 
-						# elif (abs(media[0] - centro0[0]) < 10):
+
+
+						elif (abs(media[0] - centro0[0]) < 10):
 					
-						#  	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
-						#  	velocidade_saida.publish(vel)
+						  	vel = Twist(Vector3(0.3,0,0), Vector3(0,0,0))
+						  	velocidade_saida.publish(vel)
 
 					
 
@@ -245,21 +248,21 @@ if __name__ == "__main__":
 
 					if go_back:
 								
-						while x > x0 and y > y0: 
+						if px > x0 and py > y0: 
 
 
 							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
 							vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
 
 							# sleep_rot = abs(angle/max_angular)
-							sleep_trans = abs(distance/max_linear)
+							#sleep_trans = abs(distance/max_linear)
 
 							# velocidade_saida.publish(vel_rot)
 							# rospy.sleep(sleep_rot)
 
 							velocidade_saida.publish(vel_trans)
-							rospy.sleep(sleep_trans)
-						print("-------")
+							rospy.sleep(0.2)
+							print("-------")
 	
 
 						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
