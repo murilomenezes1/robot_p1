@@ -110,7 +110,8 @@ def distance(px,py):
 	return hipotenusa
 
 
-
+fuga_x = 0
+fuga_y = 0
 
 def track(frame):
 
@@ -132,41 +133,47 @@ def track(frame):
 	lines_detected0 = False
 	lines_detected1 = False
 
-	for l in lines:
-		for radius, angle in l:
-			a = np.cos(angle)
-			b = np.sin(angle)
-
-			x0 = a*radius
-			y0 = b*radius
-		
-
-			x1 = int(x0 + 1000*(-b))
-			y1 = int(y0 + 1000*(a))
-			x2 = int(x0 - 1000*(-b))
-			y2 = int(y0 - 1000*(a)) 
+	if lines is None:
+		pass
+	else:
 
 
-			distx = x2-x1
-			disty = y2-y1
+		for l in lines:
+			for radius, angle in l:
+				a = np.cos(angle)
+				b = np.sin(angle)
+
+				x0 = a*radius
+				y0 = b*radius
+			
+
+				x1 = int(x0 + 1000*(-b))
+				y1 = int(y0 + 1000*(a))
+				x2 = int(x0 - 1000*(-b))
+				y2 = int(y0 - 1000*(a)) 
 
 
-			if distx != 0:
-				coef = disty/distx
+				distx = x2-x1
+				disty = y2-y1
 
-			if coef < -0.25 and coef > -3:
-				if lines_detected0 == False:
-					lines_detected0 = True
-					m1 = coef
-					k1 = (y1-coef*x1)
-					cv2.line(frame,(x1,y1), (x2,y2), (0,0,255),2)
 
-			elif coef > 0.25 and coef < 3:
-				if lines_detected1 == False:
-					lines_detected1 = True
-					m2 = coef
-					k2 = (y1-coef*x1)
-					cv2.line(frame,(x1,y1), (x2,y2), (0,0,255),2)
+				if distx != 0:
+					coef = disty/distx
+
+					if coef < -0.05 and coef > -7:
+						if lines_detected0 == False:
+							lines_detected0 = True
+							m1 = coef
+							k1 = (y1-coef*x1)
+							cv2.line(frame,(x1,y1), (x2,y2), (0,0,255),2)
+
+					elif coef > 0.05 and coef < 7:
+						if lines_detected1 == False:
+							lines_detected1 = True
+							m2 = coef
+							k2 = (y1-coef*x1)
+							cv2.line(frame,(x1,y1), (x2,y2), (0,0,255),2)
+					print(coef)
 
 	if (m1-m2) != 0:
 		fuga_x = int((k2-k1)/(m1-m2))
@@ -184,7 +191,7 @@ def track(frame):
 
 
 def roda_todo_frame(imagem):
-	print("frame")
+	#print("frame")
 	global cv_image
 	global media
 	global centro
@@ -252,6 +259,7 @@ if __name__ == "__main__":
 	go_back = False
 	tracking = True
 	creeper_acquired = False
+	javolto = False
 
 	try:
 
@@ -263,12 +271,12 @@ if __name__ == "__main__":
 
 				if cv_image is not None:
 					# Note que o imshow precisa ficar *ou* no codigo de tratamento de eventos *ou* no thread principal, não em ambos
-					pfuga,pframe = track(cv_image)
-					cv2.imshow("cv_image no loop principal", pframe)
+					#pfuga,pframe = track(cv_image)
+					cv2.imshow("cv_image no loop principal", frame)
 					cv2.waitKey(1)
 				# rospy.sleep(0.1)
 
-					if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
+					if len(media) != 0 and len(centro0) !=0 and maior_area > 500 and creeper_acquired == False:
 
 						# print("Media dos vermelhos: {0}, {1}".format(media[0], media[1]))
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
@@ -277,7 +285,7 @@ if __name__ == "__main__":
 						tracking = False
 
 						# if dist > 0.2:
-					if creeper_found:
+					if creeper_found and creeper_acquired == False:
 
 						if (media[0] > centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
@@ -308,12 +316,13 @@ if __name__ == "__main__":
 					if dist <= 0.25 and dist > 0:	
 
 						go_back = True
+						#creeper_acquired = True
 						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						# velocidade_saida.publish(vel)
 
-					if go_back:
+					if go_back and javolto == False:#and creeper_acquired == False:
 								
-						if px > x0 and py > y0: 
+						while px > x0 and py > y0: 
 
 
 							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
@@ -331,11 +340,16 @@ if __name__ == "__main__":
 
 
 	
-						creeper_acquired = True		
+						#creeper_acquired = True		
 						vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						velocidade_saida.publish()
+						#go_back = False
+						javolto = True
+						#tracking = True
+						creeper_acquired = True
 
 					if tracking or creeper_acquired:
+						pfuga,pframe = track(cv_image)
 
 
 						if (pfuga > centro0[0]):
