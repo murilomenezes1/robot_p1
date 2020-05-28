@@ -51,6 +51,8 @@ y = 0
 z = 0 
 id = 0
 
+cor = "green"
+
 frame = "camera_link"
 # frame = "head_camera"  # DESCOMENTE para usar com webcam USB via roslaunch tag_tracking usbcam
 
@@ -215,7 +217,7 @@ def roda_todo_frame(imagem):
 		# Note que os resultados já são guardados automaticamente na variável
 		# chamada resultados
 		centro, saida_net, resultados =  visao_module.processa(temp_image)
-		media, centro0, maior_area, frame = visao_module.identifica_cor(temp_image,"blue")        
+		media, centro0, maior_area, frame = visao_module.identifica_cor(temp_image,"green")        
 		for r in resultados:
 			# print(r) - print feito para documentar e entender
 			# o resultado            
@@ -269,17 +271,15 @@ if __name__ == "__main__":
 
 			while not rospy.is_shutdown():
 
-				# for r in resultados:
-				# 	print(r)
-
 				if cv_image is not None:
 					# Note que o imshow precisa ficar *ou* no codigo de tratamento de eventos *ou* no thread principal, não em ambos
-					#pfuga,pframe = track(cv_image)
+					#ymedia, ycenter, yma, yframe = visao_module.identifica_cor(frame, "yellow")
+				
 					cv2.imshow("cv_image no loop principal", frame)
 					cv2.waitKey(1)
 				# rospy.sleep(0.1)
 
-					if len(media) != 0 and len(centro0) !=0 and maior_area > 500 and creeper_acquired == False:
+					if len(media) != 0 and len(centro0) !=0 and maior_area > 2000 and creeper_acquired == False:
 
 						# print("Media dos vermelhos: {0}, {1}".format(media[0], media[1]))
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
@@ -287,156 +287,90 @@ if __name__ == "__main__":
 						creeper_found = True
 						tracking = False
 
-						# if dist > 0.2:
-					if creeper_found and creeper_acquired == False:
+					if creeper_found == True and creeper_acquired == False:
 
 						if (media[0] > (centro0[0] + tolerancia)) :#and right == False:
 							vel = Twist(Vector3(0,0,0), Vector3(0,0,-0.1))
 							velocidade_saida.publish(vel)
-							#rospy.sleep(0.2)
-							#right = True
 										
 						elif (media[0] < (centro0[0] - tolerancia)):# and left == False:
 							vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
 							velocidade_saida.publish(vel)
-							#rospy.sleep(0.2)
-							#left =  True
-
-
-
+							
 						elif (abs(media[0] - centro0[0]) < 10):
 					
 						  	vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0))
 						  	velocidade_saida.publish(vel)
 
-					
 
-						
 
-							# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
-							# velocidade_saida.publish(vel)
-							# rospy.sleep(0.2)
-							# angle = angle(alfa,px,py)
-							# distance = distance(px,py)
-						
+					if dist <= 0.25 and dist > 0 :#and creeper_acquired == False:
 
-					if dist <= 0.25 and dist > 0 and creeper_acquired == False:	
+						#creeper_found = False
 
 						go_back = True
 						creeper_acquired = True
-						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						# velocidade_saida.publish(vel)
+
 
 					if go_back == True and at_base == False :#and tracking == False:#and creeper_acquired == False:
+						print("EEAE MIRANDA QUEM N SABE AGORA")
+						vel= Twist(Vector3(0,0,0), Vector3(0,0,0))
+						velocidade_saida.publish(vel)
+						if cor == "blue":
+							while px > x0 and py > y0:
 
-						while px > x0 and py > y0:
+								print("going back")
 
-							print("going back")
+								vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+								velocidade_saida.publish(vel_trans)
+								rospy.sleep(0.2)
 
-							vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
-							velocidade_saida.publish(vel_trans)
-							rospy.sleep(0.2)
+						if cor == "pink":
+							while px > x0:
 
+								print("going back")
 
-							#if (media[0] > centro0[0]):
-								#vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,-0.1))
-								#velocidade_saida.publish(vel)
-											
-							#elif (media[0] < centro0[0]):
-								#vel = Twist(Vector3(-0.1,0,0), Vector3(0,0,0.1))
-								#velocidade_saida.publish(vel)
+								vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+								velocidade_saida.publish(vel_trans)
+								rospy.sleep(0.2)
 
+						if cor == "green":
+							while py < y0:
 
+								print("going back")
 
-							#lif (abs(media[0] - centro0[0]) < 10):
-						
-							  	#vel = Twist(Vector3(-0.3,0,0), Vector3(0,0,0))
-							  	#velocidade_saida.publish(vel)
-
-
+								vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+								velocidade_saida.publish(vel_trans)
+								rospy.sleep(0.2)
 						
 						at_base = True
 
-
-						# ang = angle(alfa,px,py)
-						# distance2 = distance(px,py)
-
-						# vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
-						# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
-
-						# sleep_trans = abs(distance2/max_linear)
-						# sleep_rot = abs(ang/max_angular)
-
-						# if turning == False:
-						# 	velocidade_saida.publish(vel_rot)
-						# 	rospy.sleep(sleep_rot)
-						# 	turning = True
-						# elif at_base == False:
-						# 	velocidade_saida.publish(vel_trans)
-						# 	rospy.sleep(sleep_trans)
-						# 	at_base = True
 
 					if at_base == True and tracking == False:
 						print("at base")
 					
 						tracking = True
 						at_base = False
-						#vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						#velocidade_saida.publish(vel)
-
-						# while px > x0 and py > y0: 
-
-
-							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
-							#vel_trans = Twist(Vector3(-max_linear,0,0), Vector3(0,0,0))
-
-							# sleep_rot = abs(angle/max_angular)
-							#sleep_trans = abs(distance/max_linear)
-
-							# velocidade_saida.publish(vel_rot)
-							# rospy.sleep(sleep_rot)
-
-							#velocidade_saida.publish(vel_trans)
-							#rospy.sleep(0.2)
-							#print("-------")
-
-	
-						#vel_zero = Twist(Vector3(0,0,0), Vector3(0,0,0))
-						#velocidade_saida.publish()
-						#go_back = False
-						#javolto = True
-						#tracking = True
-						#creeper_acquired = True
-
+		
 
 					if tracking :#tracking or creeper_acquired:
 
 						ymedia, ycenter, yma, yframe = visao_module.identifica_cor(frame, "yellow")
 
 
-						if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
+						#if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
 
-							if (ymedia[0] > ycenter[0]):
-								vel = Twist(Vector3(0.2,0,0), Vector3(0,0,-0.1))
-								velocidade_saida.publish(vel)
-							if (ymedia[0] < ycenter[0]):
-								vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0.1))
-								velocidade_saida.publish(vel)
-							if ymedia[0] <= 0:
-								vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
+						if (ymedia[0] > ycenter[0]):
+							vel = Twist(Vector3(0.2,0,0), Vector3(0,0,-0.1))
+							velocidade_saida.publish(vel)
+						if (ymedia[0] < ycenter[0]):
+							vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0.1))
+							velocidade_saida.publish(vel)
+						#if ymedia[0] <= 0:
+							#vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
 
 
-						#  pfuga,pframe = track(cv_image)
-						#  print("xxxxxxxxxxxxxxxxxxxxx")
-						#  if (fuga_x > centro0[0]):
-						# 	 vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
-						# 	 velocidade_saida.publish(vel)
-						# 	print("xxxxxxxxxxxxxxxxxxxxx")
-						# elif (fuga_x <  centro0[0]):
-						# 	vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
-						# 	velocidade_saida.publish(vel)
-						# 	print("ooooooooooooooooooooooooo")
-
+						
 
 				cv2.waitKey(1)
 			

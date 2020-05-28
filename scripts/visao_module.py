@@ -50,9 +50,15 @@ def identifica_cor(frame, cor):
     if cor == "blue":
         cor_menor = np.array([100, 30, 50])
         cor_maior = np.array([110, 255, 255])
+    if cor == "pink":
+        cor_menor = np.array([145, 30, 50])
+        cor_maior = np.array([155, 255, 255])
+    if cor == "green":
+        cor_menor = np.array([55, 30, 150])
+        cor_maior = np.array([65, 255, 255])
     if cor == "yellow":
         cor_menor = np.array([20,50,50])
-        cor_maior = np.array([30,255,255])
+        cor_maior = np.array([35,255,255])
 
 
     segmentado_cor = cv2.inRange(frame_hsv, cor_menor, cor_maior)
