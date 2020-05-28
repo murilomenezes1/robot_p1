@@ -259,7 +259,7 @@ if __name__ == "__main__":
 	go_back = False
 	tracking = True
 	creeper_acquired = False
-	javolto = False
+	at_base = False
 
 	try:
 
@@ -320,20 +320,27 @@ if __name__ == "__main__":
 						# vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						# velocidade_saida.publish(vel)
 
-					if go_back and javolto == False:#and creeper_acquired == False:
+					if go_back and at_base == False:#and creeper_acquired == False:
 
 
-						while px > x0 and py > y0: 
-
+							ang = angle(alfa,px,py)
 							distance2 = distance(px,py)
 
 							vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+							vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
 
 							sleep_trans = abs(distance2/max_linear)
+							sleep_rot = abs(ang/max_angular)
+
+							velocidade_saida.publish(vel_rot)
+							rospy.sleep(sleep_rot)
 
 							velocidade_saida.publish(vel_trans)
+							rospy.sleep(vel_trans)
 
-							rospy.sleep(0.2)
+							if px == x0 and py == x0:
+								at_base = True
+								tracking = True
 
 						# while px > x0 and py > y0: 
 
