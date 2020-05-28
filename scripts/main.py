@@ -322,17 +322,20 @@ if __name__ == "__main__":
 
 					if go_back and javolto == False:#and creeper_acquired == False:
 
-						distance2 = distance(px,py)
 
-						vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
+						while px > x0 and py > y0: 
 
-						sleep_trans = abs(distance2/max_linear)
+							distance2 = distance(px,py)
 
-						velocidade_saida.publish(vel_trans)
+							vel_trans = Twist(Vector3(-0.2,0,0),Vector3(0,0,0))
 
-						rospy.sleep(0.2)
+							sleep_trans = abs(distance2/max_linear)
 
-						#while px > x0 and py > y0: 
+							velocidade_saida.publish(vel_trans)
+
+							rospy.sleep(0.2)
+
+						# while px > x0 and py > y0: 
 
 
 							# vel_rot = Twist(Vector3(0,0,0), Vector3(0,0,max_angular))
