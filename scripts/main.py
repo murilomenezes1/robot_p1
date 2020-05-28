@@ -179,11 +179,11 @@ def track(frame):
 		fuga_x = int((k2-k1)/(m1-m2))
 	fuga_y = int(m1*fuga_x + k1)
 
-	pfuga = (fuga_x,fuga_y)
-	cv2.circle(frame,pfuga,10,(0,255,0),-1)
+	
+	cv2.circle(frame,(fuga_x,fuga_y),10,(0,255,0),-1)
 
 
-	return pfuga, frame
+	return (fuga_x,fuga_y), frame
 
 
 
@@ -320,7 +320,7 @@ if __name__ == "__main__":
 							# distance = distance(px,py)
 						
 
-					if dist <= 0.25 and dist > 0:	
+					if dist <= 0.25 and dist > 0 and creeper_acquired == False:	
 
 						go_back = True
 						creeper_acquired = True
@@ -380,6 +380,7 @@ if __name__ == "__main__":
 						print("at base")
 					
 						tracking = True
+						at_base = False
 						#vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
 						#velocidade_saida.publish(vel)
 
@@ -411,13 +412,11 @@ if __name__ == "__main__":
 					if tracking :#tracking or creeper_acquired:
 						pfuga,pframe = track(cv_image)
 						#print("xxxxxxxxxxxxxxxxxxxxx")
-
-						at_base = False
-						if (pfuga > centro0[0]):
+						if (fuga_x > centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
 							velocidade_saida.publish(vel)
 							print("xxxxxxxxxxxxxxxxxxxxx")
-						elif (pfuga <  centro0[0]):
+						elif (fuga_x <  centro0[0]):
 							vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
 							velocidade_saida.publish(vel)
 							print("ooooooooooooooooooooooooo")
