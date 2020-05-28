@@ -417,11 +417,13 @@ if __name__ == "__main__":
 						if len(media) != 0 and len(centro0) !=0 and maior_area > 500:
 
 							if (ymedia[0] > ycenter[0]):
-								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,-0.1))
+								vel = Twist(Vector3(0.2,0,0), Vector3(0,0,-0.1))
 								velocidade_saida.publish(vel)
 							if (ymedia[0] < ycenter[0]):
-								vel = Twist(Vector3(0.1,0,0), Vector3(0,0,0.1))
+								vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0.1))
 								velocidade_saida.publish(vel)
+							if ymedia[0] <= 0:
+								vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
 
 
 						#  pfuga,pframe = track(cv_image)
