@@ -21,7 +21,7 @@ import mobilenet_simples as mnet
 def processa(frame):
     '''Use esta funcao para basear o processamento do seu robo'''
 
-    result_frame, result_tuples = mnet.detect(frame,CLASS)
+    result_frame, result_tuples = mnet.detect(frame)
 
     centro = (frame.shape[1]//2, frame.shape[0]//2)
 

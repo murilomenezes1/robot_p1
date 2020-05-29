@@ -28,7 +28,7 @@ import visao_module
 
 
 
-objetivo = ["blue",11,"cat"]
+objetivo = ["pink",21,"bicycle"]
 
 
 x0 = None
@@ -269,7 +269,7 @@ if __name__ == "__main__":
 	creeper_acquired = False
 	at_base = False
 	final = False
-
+	detect = False
 	try:
 
 
@@ -280,8 +280,9 @@ if __name__ == "__main__":
 					# (startX, startY) = r[2]
 					# (endX, endY) = r[3]
 					if r[0] == objetivo[2]:
-						(startX, startY) = r[2]
-						(endX, endY) = r[3]
+						detect = True
+						startX = r[2][0]
+						endX = r[3][0]
 
 
 
@@ -293,7 +294,7 @@ if __name__ == "__main__":
 					cv2.waitKey(1)
 				# rospy.sleep(0.1)
 
-					if len(media) != 0 and len(centro0) !=0 and maior_area > 2000 and creeper_acquired == False:
+					if len(media) != 0 and len(centro0) !=0 and maior_area > 3000 and creeper_acquired == False:
 
 						# print("Media dos vermelhos: {0}, {1}".format(media[0], media[1]))
 						# print("Centro dos vermelhos: {0},{1}".format(centro[0], centro[1]))
@@ -318,19 +319,22 @@ if __name__ == "__main__":
 
 
 
-					if dist <= 0.25 and dist > 0 :#and creeper_acquired == False:
-
+					if dist <= 0.3 :#and creeper_acquired == False:
+						vel = Twist(Vector3(0,0,0), Vector3(0,0,0))
+						velocidade_saida.publish(vel)
 						#creeper_found = False
 
 						go_back = True
 						creeper_acquired = True
 
+						raw_input()
 
 					if go_back == True and at_base == False :#and tracking == False:#and creeper_acquired == False:
-						print("EEAE MIRANDA QUEM N SABE AGORA")
+						
 						vel= Twist(Vector3(0,0,0), Vector3(0,0,0))
 						velocidade_saida.publish(vel)
-						if cor == "blue":
+
+						if objetivo[0] == "blue":
 							while px > x0 and py > y0:
 
 								print("going back")
@@ -339,7 +343,7 @@ if __name__ == "__main__":
 								velocidade_saida.publish(vel_trans)
 								rospy.sleep(0.2)
 
-						if cor == "pink":
+						if objetivo[0] == "pink":
 							while px > x0:
 
 								print("going back")
@@ -348,7 +352,7 @@ if __name__ == "__main__":
 								velocidade_saida.publish(vel_trans)
 								rospy.sleep(0.2)
 
-						if cor == "green":
+						if objetivo[0] == "green":
 							while py < y0:
 
 								print("going back")
@@ -363,7 +367,7 @@ if __name__ == "__main__":
 					if at_base == True and tracking == False:
 						print("at base")
 					
-						# tracking = True
+						tracking = True
 						at_base = False
 						final = True
 		
@@ -384,7 +388,7 @@ if __name__ == "__main__":
 						#if ymedia[0] <= 0:
 							#vel = Twist(Vector3(0,0,0), Vector3(0,0,0.1))
 
-					if final:
+					if final and tracking:
 						ymedia, ycenter, yma, yframe = visao_module.identifica_cor(frame, "yellow")
 
 
@@ -395,7 +399,7 @@ if __name__ == "__main__":
 							vel = Twist(Vector3(0.2,0,0), Vector3(0,0,0.1))
 							velocidade_saida.publish(vel)
 
-						if r[0] != None:
+						if detect == True:
 							centrox = (startX+endX)/2
 
 							if centrox > centro[0]:

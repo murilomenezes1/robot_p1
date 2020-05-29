@@ -52,6 +52,7 @@ def detect(frame):
     # print("[INFO] computing object detections...")
     net.setInput(blob)
     detections = net.forward()
+    results = []
     # CLASS_IDX = CLASSES.index(CLASS)
 
     # loop over the detections
